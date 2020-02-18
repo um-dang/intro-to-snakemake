@@ -1,0 +1,41 @@
+inputs = ['123', '345', '567']
+
+
+rule all:
+	input:
+		expand("output/{input}_fsorted.txt", input=inputs),
+		expand("output/{input}_randsorted.txt", input=inputs)
+
+rule rsort:
+	input:
+		"{base}.txt"
+	output:
+		"output/{base}_rsorted.txt"
+	shell:
+		"sort -r {input} > {output}"
+
+rule append100:
+	input:
+		"output/{base}_rsorted.txt"
+	output:
+		"output/{base}_appended.txt"
+	shell:
+		"cat {input} > {output} ; "
+		"echo 100 >> {output}"
+
+rule randsort:
+	input:
+		"{base}.txt"
+	output:
+		"output/{base}_randsorted.txt"
+	shell:
+		"sort -R {input} > {output}"
+
+rule fsort:
+	input:
+		"output/{base}_appended.txt"
+	output:
+		"output/{base}_fsorted.txt"
+	shell:
+		"sleep 3 ; sort {input} > {output}"
+
