@@ -123,16 +123,16 @@ More about the core tenets of snakemake (also gnu make, make-like things)
 * Delete `output`, then try again. Isn't this cool?
 * Try deleting an intermediate file, then running the pipeline again. How is this beneficial? How can it be problematic?
 
-Viewing the DAG (or rulegraph)
+The workflow & DAG
 * Directed Acyclic Graph - how snakemake 'knows' how to produce the desired targets
-* It can be useful to see the workflow, and imagine how snakemake 'thinks' about executing it
+* It can be useful to see the workflow DAG, and imagine how snakemake 'thinks' about executing it
 
+Viewing the DAG (or rulegraph)
 
-    #Rulegraph (rule-level granularity)
-    snakemake --snakefile toy.snakefile --configfile toy_config.yml --rulegraph | dot -T pdf > toy_rulegraph.pdf
     #DAG (file-level granularity)
     snakemake --snakefile toy.snakefile --configfile toy_config.yml --dag | dot -T pdf > toy_dag.pdf
-
+    #Rulegraph (rule-level granularity)
+    snakemake --snakefile toy.snakefile --configfile toy_config.yml --rulegraph | dot -T pdf > toy_rulegraph.pdf
 
 </details>
 
