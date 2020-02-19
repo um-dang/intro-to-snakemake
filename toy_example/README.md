@@ -6,8 +6,10 @@ Note: If you haven't installed snakemake yet, I'd suggest using [conda](https://
 
 Topics covered:
 1. Setting up workflow targets and dependencies
-2. Getting started writing rules
+2. The basics of writing rules
 3. The workflow & DAG
+
+Get started by expanding Example 1a
 
 <details><summary>Expand - Ex. 1a</summary>
 
@@ -36,9 +38,9 @@ Targets - Have to think about the pipeline backwards - What do we want to end up
 Dependencies - What rules must be in place (inputs/outputs) for these targets to be generated?
  - This will be more obvious with the addition of more rules
 
-Writing rules - Generally will have 'input', 'output', and 'shell' blocks (more the whole story)
+Writing rules - Generally will have 'input', 'output', and 'shell' blocks (more to the story)
 
-The rule 'all' is placed at the top of the file (the first rule, anyway), and is always executed. It's being used to define the targets for the workflow. I.e. by default, this workflow will generate these targets.
+The rule 'all' is placed at the top of the file (the first rule, anyway), and this is always executed by default. It's being used to define the targets for the workflow.
 
 Now perform a dry-run:
 
@@ -47,9 +49,10 @@ Now perform a dry-run:
 Notice that snakemake keeps track of the wildcards during the evaluation of each rule
 * experiment by changing the targets so they don't match the input files
             
+## You have reached the end of example 1a ✅
+
 </details>
 
-## ✅
 
 Now we'll make the workflow a bit more interesting. We'll add more rules, use a configuration file, and more!
 
@@ -137,6 +140,7 @@ Viewing the DAG (or rulegraph)
     #Rulegraph (rule-level granularity)
     snakemake --snakefile toy.snakefile --configfile toy_config.yml --rulegraph | dot -T pdf > toy_rulegraph.pdf
 
+## You have reached the end of example 1b ✅
+
 </details>
 
-## ✅

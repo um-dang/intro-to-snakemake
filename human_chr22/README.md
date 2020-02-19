@@ -1,11 +1,11 @@
 # Snakemake RNAseq example 
 
-This is a simple bioinformatics workflow example. This example goes a bit more in-depth with snakemake features such as environment management and cluster submission that are very useful when e.g. running them on a high-performance compute cluster with SLURM. This folder contains some simulated RNAseq read data which maps to hg38 (human) chromosome 22. The chr22 reference from ENSEMBL is also included.
+This is a simple bioinformatics workflow example. This example goes a bit more in-depth with snakemake features such as environment management and cluster submission that are very useful when e.g. running them on a high-performance compute cluster with SLURM. This folder contains some simulated RNAseq read data which maps to hg38 (human) chromosome 22. The chr22 reference from ENSEMBL is also included in this repository.
 
 ##### Note: The basics of snakemake are covered in the [toy example](../toy_example/).
 
 Main topics covered in this example:
-1. Using Singularity (and biocontainers) for environment management
+1. Using Singularity for environment management
 2. Submitting workflow jobs to the SLURM cluster
 
 
@@ -142,7 +142,7 @@ Expand statement
 * Compare this examples' expand statement with the previous examples' verbose output definitions
 
 Environment management
-* We're using biocontainers along with snakemake's `singularity` directive. Consider granularity of software needs
+* We're using [biocontainers](https://biocontainers.pro/#/) along with snakemake's `singularity` directive. Consider granularity of software needs
 
 Cluster configuration
 * The \_\_default\_\_ configuration
