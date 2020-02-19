@@ -1,4 +1,4 @@
-# Snakemake example 01
+# Snakemake toy example 
 
 This is a simple toy example that can be used to start learning the basics of snakemake. This folder contains some data files with simple contents. For example, file 123.txt contains three lines of data, with values 1, 2, and 3. We'll use these simple data along with core command-line tools, included by default in most unix environments, to illustrate the basics of snakemake.
 
@@ -105,11 +105,14 @@ toy_config.yml contents:
       - '345'
       - '567'
     append_val: 42
+
+The config
+* How is the config used with this snakefile?
         
 The expand statement
 * The various uses of curly braces can be confusing at first (at least for me)
 * `expand` is distinct from `wildcards`
-* can be thought of as "expand this string (arg 1) into an array of strings, filling in all combinations of values (using arg 2)
+* can be thought of as "expand this string (arg 1) into an array of strings, filling in all combinations of values (args 2+ as key-value pairs)
 
 Running the new snakefile/configfile
 
