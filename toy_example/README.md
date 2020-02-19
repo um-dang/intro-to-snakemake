@@ -132,7 +132,7 @@ Viewing the DAG (or rulegraph)
     snakemake --snakefile toy.snakefile --configfile toy_config.yml --rulegraph | dot -T pdf > toy_rulegraph.pdf
     #DAG (file-level granularity)
     snakemake --snakefile toy.snakefile --configfile toy_config.yml --dag | dot -T pdf > toy_dag.pdf
-    
+
 
 </details>
 
