@@ -1,6 +1,6 @@
 # Snakemake toy example
 
-This is a simple toy example that can be used to start learning the basics of snakemake. This folder contains some extremely simple input files. For example, sampleA.txt contains three lines of data, with values 1, 2, and 3, respectively. We'll use these simple data along with core command-line tools, included by default in most unix environments, to illustrate the basics of snakemake.
+This is a simple toy example that can be used to start learning the basics of snakemake. This folder contains some extremely simple input files. For example, sampleA.txt contains three lines of data, with values 1, 2, and 3, respectively. We'll use these simple data along with core command-line tools, included by default in most unix-like environments, to illustrate the basics of snakemake.
 
 Note: If you haven't installed snakemake yet, I'd suggest using [conda](https://docs.conda.io/en/latest/miniconda.html) to do so.
 
@@ -30,7 +30,7 @@ ex-1a.smk has the following contents:
             "sort -r {input} > {output}"
 
 <details><summary>Ex. 1a rulegraph</summary>
-![Ex. 1a rulegraph](../img/rg-ex-1a.pdf)
+![Ex. 1a rulegraph](https://github.com/um-dang/intro-to-snakemake/blob/master/img/rg-ex-1a.pdf)
 </details>
 
 Topics covered:
