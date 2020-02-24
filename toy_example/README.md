@@ -30,7 +30,9 @@ ex-1a.smk has the following contents:
             "sort -r {input} > {output}"
 
 <details><summary>Ex. 1a rulegraph</summary>
-![Ex. 1a rulegraph](https://github.com/um-dang/intro-to-snakemake/blob/master/img/rg-ex-1a.pdf)
+
+![Ex. 1a rulegraph](../img/rg-ex-1a.pdf)
+
 </details>
 
 Topics covered:
