@@ -116,7 +116,7 @@ config-ex-1b.yml contents:
     append_val: 42
 
 <details><summary>Ex. 1b rulegraph</summary>
-![Ex. 1b rulegraph](../img/rg-ex-1b.pdf)
+![Ex. 1b rulegraph](https://github.com/um-dang/intro-to-snakemake/blob/master/img/rg-ex-1b.pdf)
 </details>
 
 The config
