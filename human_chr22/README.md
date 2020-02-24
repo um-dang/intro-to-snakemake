@@ -262,7 +262,7 @@ Example 2c dry-run:
 
 Running example 2c on GreatLakes:
 
-        snakemake --snakefile ex-2b.smk --configfile config-ex2.yml --use-singularity --jobs 144 --cluster-config jobsub-config.yml --cluster 'sbatch --job-name={cluster.name} --account={cluster.account} --partition={cluster.partition} --nodes={cluster.nodes} --ntasks-per-node={cluster.ntask} --mem={cluster.memory} --time={cluster.time}'
+        snakemake --snakefile ex-2c.smk --configfile config-ex2.yml --use-singularity --jobs 144 --cluster-config jobsub-config.yml --cluster 'sbatch --job-name={cluster.name} --account={cluster.account} --partition={cluster.partition} --nodes={cluster.nodes} --ntasks-per-node={cluster.ntask} --mem={cluster.memory} --time={cluster.time}'
 
 
 ## You have reached the end of example 2c ✅
