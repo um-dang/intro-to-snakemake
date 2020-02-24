@@ -29,31 +29,30 @@ ex-1a.smk has the following contents:
         shell:
             "sort -r {input} > {output}"
 
-<details><summary>Ex. 1a rulegraph</summary>
 
-![Ex. 1a rulegraph](https://github.com/um-dang/intro-to-snakemake/blob/master/img/rg-ex-1a.pdf)
-
-</details>
-
-Topics covered:
+Review the contents of the file, and consider the following topics:
 * Targets & dependencies
 * Writing rules
+* Intro to wildcards
 
-Targets - Have to think about the pipeline backwards - What do we want to end up with?
-
-Dependencies - What rules must be in place (inputs/outputs) for these targets to be generated?
- - This will be more obvious with the addition of more rules
-
-Writing rules - Generally will have 'input', 'output', and 'shell' blocks (more to the story)
-
-The rule 'all' is placed at the top of the file (the first rule, anyway), and this is always executed by default. It's being used to define the targets for the workflow.
 
 To perform a dry-run:
 
     snakemake --snakefile ex-1a.smk --dry-run
 
-Notice that snakemake keeps track of the wildcards during the evaluation of each rule
-* experiment by changing the targets so they don't match the input files
+If all looks well, run example 1a (remove `--dry-run` from the previous command)
+
+    snakemake --snakefile ex-1a.smk
+
+Review the ouputs. Were they generated successfully? What happens if we try running it again?
+
+    snakemake --snakefile ex-1a.smk
+
+Try deleting the output directory. What happens if we run it then?
+
+    rm -r output/
+    snakemake --snakefile ex-1a.smk
+
 
 ## You have reached the end of example 1a ✅
 
@@ -107,7 +106,7 @@ ex-1b.smk contents:
       shell:
         "sleep 2 ; sort -n {input} > {output}"
 
-config-ex-1b.yml contents:
+config-ex1.yml contents:
 
     basenames:
       - 'sampleA'
@@ -116,39 +115,45 @@ config-ex-1b.yml contents:
     append_val: 42
 
 <details><summary>Ex. 1b rulegraph</summary>
+
 ![Ex. 1b rulegraph](https://github.com/um-dang/intro-to-snakemake/blob/master/img/rg-ex-1b.pdf)
+
 </details>
 
-The config
-* How is the config used with this snakefile?
+Review these files and consider the following topics:
+* The DAG/rulegraph
+* The configuration file
+* The expand statement
 
-The expand statement
-* The various uses of curly braces can be confusing at first (at least for me)
-* `expand` is distinct from `wildcards`
-* can be thought of as "expand this string (arg 1) into an array of strings, filling in all combinations of values (args 2+ as key-value pairs)
 
-Running the new snakefile/configfile
 
-    snakemake --snakefile ex-1b.smk --configfile config-ex-1b.yml
+To dry-run the new snakefile/configfile
 
-Did snakemake run the workflow, and successfully create the desired targets?
-* View the directory of results
+    snakemake --snakefile ex-1b.smk --configfile config-ex1.yml --dry-run
 
-More about the core tenets of snakemake (also gnu make, make-like things)
-* Try running the workflow to completion, then running it again. What happens?
-* Delete `output`, then try again. Isn't this cool?
-* Try modifying an intermediate file, then running the pipeline again. How is this beneficial? How can it be problematic?
+If all looks well, run the workflow (remove the `--dry-run` flag)
 
-The workflow & DAG
-* Directed Acyclic Graph - how snakemake 'knows' how to produce the desired targets
-* It can be useful to see the workflow DAG, and imagine how snakemake 'thinks' about executing it
+    snakemake --snakefile ex-1b.smk --configfile config-ex1.yml
 
-Viewing the DAG (or rulegraph)
+Review the directory of results. Did snakemake run the workflow, and successfully create the desired targets?
+
+Try deleting an intermediate file, then running the pipeline again. What happens?
+
+    rm output/sampleA_appended.txt
+    snakemake --snakefile ex-1b.smk --configfile config-ex1.yml
+
+What about modifying an intermediate file, and running the pipeline again?
+
+    echo 101 >> output/sampleB_appended.txt
+    snakemake --snakefile ex-1b.smk --configfile config-ex1.yml
+
+
+Try creating the DAG or rulegraph
 
     #DAG (file-level granularity)
-    snakemake --snakefile ex-1b.smk --configfile config-ex-1b.yml --dag | dot -T pdf > dag-ex-1b.pdf
+    snakemake --snakefile ex-1b.smk --configfile config-ex1.yml --dag | dot -T pdf > dag-ex-1b.pdf
     #Rulegraph (rule-level granularity)
-    snakemake --snakefile ex-1b.smk --configfile config-ex-1b.yml --rulegraph | dot -T pdf > rg-ex-1b.pdf
+    snakemake --snakefile ex-1b.smk --configfile config-ex1.yml --rulegraph | dot -T pdf > rg-ex-1b.pdf
 
 ## You have reached the end of example 1b ✅
 
