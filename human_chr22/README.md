@@ -47,7 +47,7 @@ ex-2a.smk has the following contents:
 
     rule bwa_mem:
         input:
-            sa = "reference/chr22.sa",
+            sa = config['ref_prefix'] + ".sa",
             r1 = "read_data/{sample}/{sample}_R1.fastq.gz",
             r2 = "read_data/{sample}/{sample}_R2.fastq.gz"
         output:
@@ -80,7 +80,7 @@ Review these files and consider the following topics:
 * Specifying resources on a per-rule basis
 
 
-Perform a dry-run
+Perform a dry-run (after fixing the fasta_gunzip rule)
 
     snakemake --snakefile ex-2a.smk --configfile config-ex2.yml --dry-run
 
@@ -262,7 +262,7 @@ Example 2c dry-run:
 
 Running example 2c on GreatLakes:
 
-        snakemake --snakefile ex-2c.smk --configfile config-ex2.yml --use-singularity --jobs 144 --cluster-config jobsub-config.yml --cluster 'sbatch --job-name={cluster.name} --account={cluster.account} --partition={cluster.partition} --nodes={cluster.nodes} --ntasks-per-node={cluster.ntask} --mem={cluster.memory} --time={cluster.time}'
+    snakemake --snakefile ex-2c.smk --configfile config-ex2.yml --use-singularity --jobs 144 --cluster-config jobsub-config.yml --cluster 'sbatch --job-name={cluster.name} --account={cluster.account} --partition={cluster.partition} --nodes={cluster.nodes} --ntasks-per-node={cluster.ntask} --mem={cluster.memory} --time={cluster.time}'
 
 
 ## You have reached the end of example 2c ✅
