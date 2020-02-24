@@ -15,7 +15,7 @@ Get started by expanding Example 2a:
 
 Here we'll make a simple workflow for aligning the reads. There are three rules, one for unzipping the fasta reference, one for creating a bwa index from the given fasta, and one to use bwa mem to align the reads to the index.
 
-#### Note: You'll have to complete the first rule in order for the pipeline to work!
+#### Note: You'll have to complete the first rule in order for this to work!
 
 ex-2a.smk has the following contents:
 
@@ -74,12 +74,11 @@ config-ex2.yml has the following contents:
       - sample_08
 
 
-##### Things to notice/think about:
-* Outputs for bwa_index rule are pretty verbose. Can we use an expand statement to define these more succinctly?
-* Named inputs are used in bwa_mem step. How is this useful?
-* `reference/chr22.sa` is listed as an input for bwa_mem. Why?
-  * bonus: It's listed explicitly here to illustrate the above point. Maybe it should be expressed in a different way. How else could this be written?
-* We're setting number of threads on a per-rule basis (for bwa_mem)
+Review these files and consider the following topics:
+* Named inputs/outputs
+* Linking rules with dependencies
+* Specifying resources on a per-rule basis
+
 
 Perform a dry-run
 
@@ -91,7 +90,6 @@ What happens? Why?
 ## You have reached the end of example 2a ✅
 
 </details>
-
 
 
 Now we'll make a few changes to enable us to run this on the compute cluster
@@ -140,9 +138,7 @@ ex-2b.smk has the following contents:
 
 config-ex2.yml is unmodified from the previous example
 
-jobsub-config.yml with the following contents:
-
-#### Note: You'll have to change the account name to your own greatlakes account
+jobsub-config.yml has the following contents:
 
     __default__:
         name: '{rule}_{wildcards}'
@@ -157,25 +153,21 @@ jobsub-config.yml with the following contents:
         ntask: '{threads}'
 
 
-##### Things to notice/think about:
-
-Expand statement
+Review these files and consider the following:
+* Snakemake + Singularity
+* Granularity of software needs
+* The job-submission configuration
 * Compare this examples' expand statement with the previous examples' verbose output definitions
 
-Environment management
-* We're using [biocontainers](https://biocontainers.pro/#/) along with snakemake's `singularity` directive. Consider granularity of software needs
 
-Cluster configuration
-* The \_\_default\_\_ configuration
-* Rule-specific configurations override the defaults
-* We added more threads to the process - will be requested at job submission and used during execution
+Running the workflow on the GreatLakes cluster:
 
-
-
-##### Running the workflow on the GreatLakes cluster:
+#### Note: The singularity executable must be available. On GreatLakes, `module load singularity`
+#### Note: You'll have to change the account name in `jobsub-config.yml` to your own greatlakes account
 
 I'll give the whole command-line invocation first, and then explain below (it may seem complex at first glance)
 
+    module load singularity
     snakemake --snakefile ex-2b.smk --configfile config-ex2.yml --use-singularity --jobs 144 --cluster-config jobsub-config.yml --cluster 'sbatch --job-name={cluster.name} --account={cluster.account} --partition={cluster.partition} --nodes={cluster.nodes} --ntasks-per-node={cluster.ntask} --mem={cluster.memory} --time={cluster.time}'
 
 Breaking down the new additions to the command line invocation:
@@ -189,13 +181,19 @@ Breaking down the new additions to the command line invocation:
 
 </details>
 
-Finally, in example 2c we extend the workflow to produce bigwig files - display tracks which can be opened in a genome browser to visualize the alignment results. If you're inclined, try to achieve this on your own before expanding the example below.
+Finally, example 2c is an open-ended exercise, where you can extend the workflow to generate additional targets.
 
-Hint: deeptools bamCoverage is a great tool for producing the bigwig. Intermediate steps are required, though.
+Before expanding example 2c, try creating your own by extending example 2b.
+
+    cp ex-2b.smk ex-2c.smk
+
+Edit ex-2c.smk to achieve the following:
+* extend the workflow to produce bigwig files - display tracks which can be opened in a genome browser to visualize the alignment results.
+* Hint: deeptools bamCoverage is a great tool for producing the bigwig. Intermediate steps are required, though. It only accepts sorted and indexed bam as input
 
 <details><summary>Expand - Ex. 2c</summary>
 
-Before expanding the contents of ex-2c.smk, try copying ex-2b.smk 
+Before expanding the contents of ex-2c.smk, try copying ex-2b.smk
 
 ex-2c.smk has the following contents:
 
@@ -256,6 +254,15 @@ ex-2c.smk has the following contents:
         singularity: "docker://quay.io/biocontainers/deeptools:3.0.1--py36_1"
         shell:
             "bamCoverage -b {input.bam} -o {output}"
+
+
+Example 2c dry-run:
+
+    snakemake --snakefile ex-2c.smk --configfile config-ex2.yml --dry-run
+
+Running example 2c on GreatLakes:
+
+        snakemake --snakefile ex-2b.smk --configfile config-ex2.yml --use-singularity --jobs 144 --cluster-config jobsub-config.yml --cluster 'sbatch --job-name={cluster.name} --account={cluster.account} --partition={cluster.partition} --nodes={cluster.nodes} --ntasks-per-node={cluster.ntask} --mem={cluster.memory} --time={cluster.time}'
 
 
 ## You have reached the end of example 2c ✅
