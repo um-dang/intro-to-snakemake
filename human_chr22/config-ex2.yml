@@ -1,0 +1,11 @@
+ref_fasta_gz: Homo_sapiens.GRCh38.dna_sm.chr22.fa.gz
+ref_prefix: reference/chr22
+samples:
+  - sample_01
+  - sample_02
+  - sample_03
+  - sample_04
+  - sample_05
+  - sample_06
+  - sample_07
+  - sample_08

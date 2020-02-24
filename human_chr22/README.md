@@ -1,6 +1,6 @@
-# Snakemake RNAseq example 
+# Snakemake RNAseq example
 
-This is a simple bioinformatics workflow example. This example goes a bit more in-depth with snakemake features such as environment management and cluster submission that are very useful when e.g. running them on a high-performance compute cluster with SLURM. This folder contains some simulated RNAseq read data which maps to hg38 (human) chromosome 22. The chr22 reference from ENSEMBL is also included in this repository.
+This is an example of a simple bioinformatics workflow. This example covers a few important and useful snakemake features such as environment management and job submission which enable possibilities e.g. running workflows on a high-performance compute cluster with SLURM. This folder contains some simulated RNAseq read data which maps to hg38 (human) chromosome 22. The chr22 reference from ENSEMBL is also included in this repository.
 
 ##### Note: The basics of snakemake are covered in the [toy example](../toy_example/).
 
@@ -9,23 +9,31 @@ Main topics covered in this example:
 2. Submitting workflow jobs to the SLURM cluster
 
 
-Get started by expanding Example 3a:
+Get started by expanding Example 2a:
 
-<details><summary>Expand - Ex. 3a</summary>
+<details><summary>Expand - Ex. 2a</summary>
 
-Here we'll make a simple workflow for aligning the reads. There are two rules, one for creating a bwa index from the given fasta, and one to use bwa mem to align the reads to the index. 
+Here we'll make a simple workflow for aligning the reads. There are three rules, one for unzipping the fasta reference, one for creating a bwa index from the given fasta, and one to use bwa mem to align the reads to the index.
 
-##### Note: You'll have to unzip the Chr22 reference before running the pipeline - Otherwise snakemake will fail to find the required input file (doesn't expect .gz)
+#### Note: You'll have to complete the first rule in order for the pipeline to work!
 
-Create a file named rnaseq.snakefile with the following contents:
+ex-2a.smk has the following contents:
 
     rule all:
         input:
             expand("aligned/{sample}.sam", sample=config['samples'])
 
+    # rule fasta_gunzip:
+    #     input:
+    #         
+    #     output:
+    #
+    #     shell:
+    #
+
     rule bwa_index:
         input:
-            config['ref_fasta']
+            config['ref_prefix'] + ".fa"
         output:
             config['ref_prefix'] + ".amb",
             config['ref_prefix'] + ".ann",
@@ -49,11 +57,11 @@ Create a file named rnaseq.snakefile with the following contents:
             ref_prefix = config['ref_prefix']
         shell:
             "bwa mem -t {threads} {params.ref_prefix} {input.r1} {input.r2} > {output}"
-            
-            
-Also create a config file named rnaseq_config.yml with the following contents:
 
-    ref_fasta: Homo_sapiens.GRCh38.dna_sm.chr22.fa
+
+config-ex2.yml has the following contents:
+
+    ref_fasta_gz: Homo_sapiens.GRCh38.dna_sm.chr22.fa.gz
     ref_prefix: reference/chr22
     samples:
       - sample_01
@@ -75,30 +83,38 @@ Also create a config file named rnaseq_config.yml with the following contents:
 
 Perform a dry-run
 
-    snakemake --snakefile rnaseq.snakefile --configfile rnaseq_config.yml --dry-run
-    
+    snakemake --snakefile ex-2a.smk --configfile config-ex2.yml --dry-run
+
 Now try running it (run the previous command without the --dry-run flag).
 What happens? Why?
 
-## You have reached the end of example 3a ✅
-            
+## You have reached the end of example 2a ✅
+
 </details>
 
 
 
 Now we'll make a few changes to enable us to run this on the compute cluster
 
-<details><summary>Expand - Ex. 3b</summary>
+<details><summary>Expand - Ex. 2b</summary>
 
-Modify rnaseq.snakefile so that it has the following contents:
+ex-2b.smk has the following contents:
 
     rule all:
         input:
             expand("aligned/{sample}.sam", sample=config['samples'])
 
+    rule fasta_gunzip:
+        input:
+            config['ref_fasta_gz']
+        output:
+            config['ref_prefix'] + ".fa"
+        shell:
+            "gunzip -c {input} > {output}"
+
     rule bwa_index:
         input:
-            config['ref_fasta']
+            config['ref_prefix'] + ".fa"
         output:
             expand(config['ref_prefix'] + ".{ext}", ext=['amb', 'ann', 'bwt', 'pac', 'sa'])
         params:
@@ -121,11 +137,16 @@ Modify rnaseq.snakefile so that it has the following contents:
         shell:
             "bwa mem -t {threads} {params.ref_prefix} {input.r1} {input.r2} > {output}"
 
-Create a cluster configuration file called greatlakes_config.yml with the following contents:
+
+config-ex2.yml is unmodified from the previous example
+
+jobsub-config.yml with the following contents:
+
+#### Note: You'll have to change the account name to your own greatlakes account
 
     __default__:
         name: '{rule}_{wildcards}'
-        account: cgates1
+        account: your_account
         partition: standard
         nodes: '1'
         ntask: '1'
@@ -134,7 +155,7 @@ Create a cluster configuration file called greatlakes_config.yml with the follow
 
     bwa_mem:
         ntask: '{threads}'
-        
+
 
 ##### Things to notice/think about:
 
@@ -155,34 +176,44 @@ Cluster configuration
 
 I'll give the whole command-line invocation first, and then explain below (it may seem complex at first glance)
 
-    snakemake --snakefile rnaseq.snakefile --configfile rnaseq_config.yml --use-singularity --jobs 144 --cluster-config greatlakes_config.yml --cluster 'sbatch --job-name={cluster.name} --account={cluster.account} --partition={cluster.partition} --nodes={cluster.nodes} --ntasks-per-node={cluster.ntask} --mem={cluster.memory} --time={cluster.time}'
-    
+    snakemake --snakefile ex-2b.smk --configfile config-ex2.yml --use-singularity --jobs 144 --cluster-config jobsub-config.yml --cluster 'sbatch --job-name={cluster.name} --account={cluster.account} --partition={cluster.partition} --nodes={cluster.nodes} --ntasks-per-node={cluster.ntask} --mem={cluster.memory} --time={cluster.time}'
+
 Breaking down the new additions to the command line invocation:
 * `--use-singularity` tells snakemake to make use of the `singularity:` blocks within the rules
 * `--jobs` must be used for cluster submission; it's the number of concurrent jobs sent to the scheduler
 * `--cluster-config` provides the name of the file where job submission configuration details are defined
-* `--cluster` is a template string which is filled-in with the values from greatlakes_config.yml, in order to produce the job submission commands for the cluster. This allows the flexibility of working with other resource manager/schedulers by modifying the template.
+* `--cluster` is a template string which is filled-in with the values from jobsub-config.yml, in order to produce the job submission commands for the cluster. This allows the flexibility of working with other resource manager/schedulers by modifying the template.
 
 
-## You have reached the end of example 3b ✅
+## You have reached the end of example 2b ✅
 
 </details>
 
-Finally, in example 3c we extend the workflow to produce bigwig files - display tracks which can be opened in a genome browser to visualize the alignment results. If you're inclined, try to achieve this on your own before expanding the example below.
+Finally, in example 2c we extend the workflow to produce bigwig files - display tracks which can be opened in a genome browser to visualize the alignment results. If you're inclined, try to achieve this on your own before expanding the example below.
 
 Hint: deeptools bamCoverage is a great tool for producing the bigwig. Intermediate steps are required, though.
 
-<details><summary>Expand - Ex. 3c</summary>
+<details><summary>Expand - Ex. 2c</summary>
 
-rnaseq.snakefile contents:
+Before expanding the contents of ex-2c.smk, try copying ex-2b.smk 
+
+ex-2c.smk has the following contents:
 
     rule all:
         input:
             expand("coverage/{sample}.bigwig", sample=config['samples'])
 
+    rule fasta_gunzip:
+        input:
+            config['ref_fasta_gz']
+        output:
+            temp(config['ref_prefix'] + ".fa")
+        shell:
+            "gunzip -c {input} > {output}"
+
     rule bwa_index:
         input:
-            config['ref_fasta']
+            config['ref_prefix'] + ".fa"
         output:
             expand(config['ref_prefix'] + ".{ext}", ext=['amb', 'ann', 'bwt', 'pac', 'sa'])
         params:
@@ -227,6 +258,6 @@ rnaseq.snakefile contents:
             "bamCoverage -b {input.bam} -o {output}"
 
 
-## You have reached the end of example 3c ✅
+## You have reached the end of example 2c ✅
 
 </details>

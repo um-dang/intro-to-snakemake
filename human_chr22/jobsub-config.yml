@@ -1,0 +1,11 @@
+__default__:
+    name: '{rule}_{wildcards}'
+    account: your_account
+    partition: standard
+    nodes: '1'
+    ntask: '1'
+    memory: '1024'
+    time:   '00:30:00'
+
+bwa_mem:
+    ntask: '{threads}'
